@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,81 +7,24 @@ using System.Threading.Tasks;
 
 namespace task_21
 {
-    public class BinaryTree
+    class Program
     {
-        public class Node // вложенный класс для узлов
+        static void Main(string[] args)
         {
-            public object inf;
-            public Node left;
-            public Node right;
-            public int depth;
-
-            public Node(object nodeInf, int depth)
+            BinaryTree tree = new BinaryTree();
+            using (StreamReader file_input = new StreamReader("C:/Users/sonya/source/repos/task_21/input.txt"))
             {
-                inf = nodeInf;
-                left = null;
-                right = null;
-                this.depth = depth;
-            }
+                string[] text = file_input.ReadLine().Split(' ');
 
-            public static void Add(ref Node r, object nodeInf, int depth)
-            {
-                if (r == null) // если корень и есть место для узла, то добавляем
+                for (int i = 0; i < text.Length; i++)
                 {
-                    r = new Node(nodeInf, depth);
+                    tree.Add(int.Parse(text[i]));
                 }
-                else
-                {
-                    if (((IComparable)(r.inf)).CompareTo(nodeInf) > 0) // nodeInf < r.inf?,
-                                                                       // возвращает 1, если r.inf следует в порядке возрастания за nodeInf
-                    {
-                        Add(ref r.left, nodeInf, depth + 1); // если да, то производим поиск места в левом
-                    }
-                    else
-                    {
-                        Add(ref r.right, nodeInf, depth + 1); // иначе в правом
-                    }
-                }
+                tree.Preorder();
+                Console.WriteLine();
+
+
             }
-
-            public static void Preorder(Node r) // прямой обход дерева - корень, левое и правое поддерево
-            {
-                if (r != null)
-                {
-                    Console.WriteLine("{0}, depth - {1}", r.inf, r.depth);
-                    Preorder(r.left);
-                    Preorder(r.right);
-                }
-            }
-            
-        }
-
-        Node tree;
-
-        public object Inf
-        {
-            set { tree.inf = value; }
-            get { return tree.inf; }
-        }
-
-        public BinaryTree() // открытый конструктор
-        {
-            tree = null;
-        }
-
-        private BinaryTree(Node r) // закрытый конструктор
-        {
-            tree = r;
-        }
-
-        public void Add(object nodeInf)
-        {
-            Node.Add(ref tree, nodeInf, 0);
-        }
-
-        public void Preorder()
-        {
-            Node.Preorder(tree);
         }
     }
 }
