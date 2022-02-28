@@ -8,35 +8,37 @@ namespace task_21
 {
     public class BinaryTree
     {
-        private class Node // вложенный класс для узлов
+        public class Node // вложенный класс для узлов
         {
             public object inf;
             public Node left;
             public Node right;
+            public int depth;
 
-            public Node(object nodeInf)
+            public Node(object nodeInf, int depth)
             {
                 inf = nodeInf;
                 left = null;
                 right = null;
+                this.depth = depth;
             }
 
-            public static void Add(ref Node r, object nodeInf)
+            public static void Add(ref Node r, object nodeInf, int depth)
             {
                 if (r == null) // если корень и есть место для узла, то добавляем
                 {
-                    r = new Node(nodeInf);
+                    r = new Node(nodeInf, depth);
                 }
                 else
                 {
                     if (((IComparable)(r.inf)).CompareTo(nodeInf) > 0) // nodeInf < r.inf?,
                                                                        // возвращает 1, если r.inf следует в порядке возрастания за nodeInf
                     {
-                        Add(ref r.left, nodeInf); // если да, то производим поиск места в левом
+                        Add(ref r.left, nodeInf, depth + 1); // если да, то производим поиск места в левом
                     }
                     else
                     {
-                        Add(ref r.right, nodeInf); // иначе в правом
+                        Add(ref r.right, nodeInf, depth + 1); // иначе в правом
                     }
                 }
             }
@@ -45,58 +47,12 @@ namespace task_21
             {
                 if (r != null)
                 {
-                    Console.Write("{0} ", r.inf);
+                    Console.WriteLine("{0}, depth - {1}", r.inf, r.depth);
                     Preorder(r.left);
                     Preorder(r.right);
                 }
             }
-
-            public static void Search(Node r, object key, out Node item)
-            {
-                if (r == null)
-                {
-                    item = null;
-                }
-                else
-                {
-                    if (((IComparable)(r.inf)).CompareTo(key) == 0)
-                    {
-                        item = r;
-                    }
-                    else
-                    {
-                        if (((IComparable)(r.inf)).CompareTo(key) > 0)
-                        {
-                            Search(r.left, key, out item);
-                        }
-                        else
-                        {
-                            Search(r.right, key, out item);
-                        }
-                    }
-                }
-            }
-
-            public static void Depth(Node t, int b, ref int res)
-            {
-                res++;
-                if (((IComparable)(t.inf)).CompareTo(b) == 0) // если найден узел, то завершаем работу
-                {
-                    return;
-                }
-                else
-                {
-                    if (((IComparable)(t.inf)).CompareTo(b) > 0)
-                    {
-                        Depth(t.left, b, ref res);
-                    }
-                    else
-                    {
-                        Depth(t.right, b, ref res);
-                    }
-                }
-
-            }
+            
         }
 
         Node tree;
@@ -119,19 +75,12 @@ namespace task_21
 
         public void Add(object nodeInf)
         {
-            Node.Add(ref tree, nodeInf);
+            Node.Add(ref tree, nodeInf, 0);
         }
 
         public void Preorder()
         {
             Node.Preorder(tree);
-        }
-
-        public void DepthBinaryTree(int a, int b, ref int res)
-        {
-            Node itemA;
-            Node.Search(tree, a, out itemA);
-            Node.Depth(itemA, b, ref res);
         }
     }
 }
