@@ -3,10 +3,9 @@
 **Задание 17**
 ![image](https://user-images.githubusercontent.com/78658225/160781058-65c79277-bfa5-4eab-a2eb-8d36eb6e3fbc.png)
 
-**Задание 18**
+**Задание 18 и 19**
 ![image](https://user-images.githubusercontent.com/78658225/160781163-006b7367-6ece-40a8-8106-2e3a6a8a2d87.png)
-
-**Задание 19**
+![image](https://user-images.githubusercontent.com/78658225/160781326-5824c6ac-29bb-4340-8c7e-98ccecc74954.png)
 
 **Задание 21.1**
 
