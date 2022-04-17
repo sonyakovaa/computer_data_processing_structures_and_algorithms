@@ -13,14 +13,12 @@ namespace task_21_3
             public object inf;
             public Node left;
             public Node right;
-            public int height;
 
             public Node(object nodeInf)
             {
                 inf = nodeInf;
                 left = null;
                 right = null;
-                this.height = 0;
             }
 
             public static void Add(ref Node r, object nodeInf)
@@ -47,7 +45,7 @@ namespace task_21_3
             {
                 if (r != null)
                 {
-                    Console.WriteLine("{0} - {1}", r.inf, r.height);
+                    Console.WriteLine("{0}", r.inf);
                     Preorder(r.left);
                     Preorder(r.right);
                 }
@@ -83,49 +81,66 @@ namespace task_21_3
             Node.Preorder(tree);
         }
 
-        private bool idealBalance(int h, int n)
+        public void outputInformation()
         {
-            return h == Math.Ceiling(Math.Log(n + 1, 2));
+            bool idealBalanced = false, canRemove = false;
+            int count = 0;
+            Node deepestNode = null;
+            fImpl(ref tree, ref idealBalanced, ref count, ref canRemove, ref deepestNode);
+
+            Console.WriteLine("Ideal balanced: {0}, can remove: {1}, node to remove: {2}", idealBalanced, canRemove, deepestNode);
         }
 
-        public void f()
+        private void fImpl(ref Node node, ref bool idealBalanced, ref int count, ref bool canRemove, ref Node deepestNode)
         {
-            List<List<Node>> levels = new List<List<Node>>();
-            int n = f2(tree, levels, 0);
-            int h = levels.Count;
-
-            if (idealBalance(h, n))
+            if (node == null)
             {
-                Console.WriteLine("Дерево идеально сбалансировано");
+                idealBalanced = true;
+                count = 0;
+                canRemove = false;
+                deepestNode = null;
                 return;
             }
 
-            if (levels[levels.Count - 1].Count == 1)
+            bool leftIdealBalanced = false, leftCanRemove = false;
+            int leftCount = 0;
+            Node leftDeepestNode = null;
+            fImpl(ref node.left, ref leftIdealBalanced, ref leftCount, ref leftCanRemove, ref leftDeepestNode);
+
+            bool rightIdealBalanced = false, rightCanRemove = false;
+            int rightCount = 0;
+            Node rightDeepestNode = null;
+            fImpl(ref node.right, ref rightIdealBalanced, ref rightCount, ref rightCanRemove, ref rightDeepestNode);
+
+            int delta = Math.Abs(leftCount - rightCount);
+            idealBalanced = leftIdealBalanced && rightIdealBalanced && (delta <= 1);
+            count = leftCount + rightCount + 1;
+            canRemove = !idealBalanced && (delta <= 2) && ((!leftCanRemove && !rightCanRemove) || (rightCanRemove != leftCanRemove));
+
+            if (leftDeepestNode == null && rightDeepestNode == null)
             {
-                if (idealBalance(h - 1, n - 1))
+                deepestNode = node;
+            }
+            else if (leftDeepestNode != null && rightDeepestNode == null)
+            {
+                deepestNode = leftDeepestNode;
+            }
+            else if (leftDeepestNode == null && rightDeepestNode != null)
+            {
+                deepestNode = rightDeepestNode;
+            }
+            else
+            {
+                if (leftCount > rightCount)
                 {
-                    Node node_todelete = levels[levels.Count - 1][0];
-                    Console.WriteLine("Надо удалить узел {0}", node_todelete.inf);
-                    return;
+                    deepestNode = leftDeepestNode;
+                }
+                else
+                {
+                    deepestNode = rightDeepestNode;
                 }
             }
-
-            Console.WriteLine("Нельзя удалить так, чтобы дерево стало идеально сбалансированным");
         }
 
-        private int f2(Node n, List<List<Node>> levels, int level)
-        {
-            if (n == null)
-                return 0;
-
-            if (levels.Count <= level)
-            {
-                levels.Add(new List<Node>());
-            }
-
-            levels[level].Add(n);
-
-            return 1 + f2(n.left, levels, level + 1) + f2(n.right, levels, level + 1);
-        }
     }
 }
