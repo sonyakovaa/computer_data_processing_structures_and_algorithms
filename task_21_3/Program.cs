@@ -22,8 +22,7 @@ namespace task_21_3
                     tree.Add(int.Parse(text[i]));
                 }
                 tree.Preorder();
-                tree.f();
-                Console.WriteLine();
+                tree.outputInformation();
             }
         }
     }
