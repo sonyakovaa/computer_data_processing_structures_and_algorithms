@@ -55,6 +55,14 @@ namespace task_21_3
 
         Node tree;
 
+        public struct Returns
+        {
+            public bool idealBalanced;
+            public int count;
+            public bool canRemove;
+            public Node deepestNode;
+        }
+
         public object Inf
         {
             set { tree.inf = value; }
@@ -83,64 +91,61 @@ namespace task_21_3
 
         public void outputInformation()
         {
-            bool idealBalanced = false, canRemove = false;
-            int count = 0;
-            Node deepestNode = null;
-            fImpl(ref tree, ref idealBalanced, ref count, ref canRemove, ref deepestNode);
+            Returns r = fImpl(tree);
 
-            Console.WriteLine("Ideal balanced: {0}, can remove: {1}, node to remove: {2}", idealBalanced, canRemove, deepestNode);
+            Console.WriteLine("Ideal balanced: {0}, can remove: {1}", r.idealBalanced, r.canRemove);
+            if (r.canRemove == true)
+            {
+                Console.WriteLine("Node to remove: {0}", r.deepestNode.inf);
+            }
         }
 
-        private void fImpl(ref Node node, ref bool idealBalanced, ref int count, ref bool canRemove, ref Node deepestNode)
+        Returns fImpl(Node node)
         {
             if (node == null)
             {
-                idealBalanced = true;
-                count = 0;
-                canRemove = false;
-                deepestNode = null;
-                return;
+                Returns r = new Returns();
+                r.idealBalanced = true;
+                r.count = 0;
+                r.canRemove = false;
+                r.deepestNode = null;
+
+                return r;
             }
 
-            bool leftIdealBalanced = false, leftCanRemove = false;
-            int leftCount = 0;
-            Node leftDeepestNode = null;
-            fImpl(ref node.left, ref leftIdealBalanced, ref leftCount, ref leftCanRemove, ref leftDeepestNode);
+            Returns leftS = fImpl(node.left);
+            Returns rightS = fImpl(node.right);
 
-            bool rightIdealBalanced = false, rightCanRemove = false;
-            int rightCount = 0;
-            Node rightDeepestNode = null;
-            fImpl(ref node.right, ref rightIdealBalanced, ref rightCount, ref rightCanRemove, ref rightDeepestNode);
+            int delta = Math.Abs(leftS.count - rightS.count);
+            Returns result;
+            result.idealBalanced = leftS.idealBalanced && rightS.idealBalanced && (delta <= 1);
+            result.count = leftS.count + rightS.count + 1;
+            result.canRemove = !result.idealBalanced && (delta <= 2) && ((!leftS.canRemove && !rightS.canRemove) || (rightS.canRemove != leftS.canRemove));
 
-            int delta = Math.Abs(leftCount - rightCount);
-            idealBalanced = leftIdealBalanced && rightIdealBalanced && (delta <= 1);
-            count = leftCount + rightCount + 1;
-            canRemove = !idealBalanced && (delta <= 2) && ((!leftCanRemove && !rightCanRemove) || (rightCanRemove != leftCanRemove));
-
-            if (leftDeepestNode == null && rightDeepestNode == null)
+            if (leftS.deepestNode == null && rightS.deepestNode == null)
             {
-                deepestNode = node;
+                result.deepestNode = node;
             }
-            else if (leftDeepestNode != null && rightDeepestNode == null)
+            else if (leftS.deepestNode != null && rightS.deepestNode == null)
             {
-                deepestNode = leftDeepestNode;
+                result.deepestNode = leftS.deepestNode;
             }
-            else if (leftDeepestNode == null && rightDeepestNode != null)
+            else if (leftS.deepestNode == null && rightS.deepestNode != null)
             {
-                deepestNode = rightDeepestNode;
+                result.deepestNode = rightS.deepestNode;
             }
             else
             {
-                if (leftCount > rightCount)
+                if (leftS.count > rightS.count)
                 {
-                    deepestNode = leftDeepestNode;
+                    result.deepestNode = leftS.deepestNode;
                 }
                 else
                 {
-                    deepestNode = rightDeepestNode;
+                    result.deepestNode = rightS.deepestNode;
                 }
             }
+            return result;
         }
-
     }
 }
